@@ -12,7 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         // Allow CORS for all paths and all origins
         registry.addMapping("/**")
-                .allowedOrigins("*")  // Replace with the frontend URL or wildcard "*"
+                .allowedOrigins("https://wasteshield.cleverapps.io/swagger-ui")  // Replace with the frontend URL or wildcard "*"
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
