@@ -12,7 +12,7 @@ public class CorsConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         // Allow CORS for all paths and all origins
         registry.addMapping("/**")
-                .allowedOrigins("https://wasteshield.cleverapps.io")
+                .allowedOrigins("http://wasteshield.cleverapps.io/api/rooms")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
