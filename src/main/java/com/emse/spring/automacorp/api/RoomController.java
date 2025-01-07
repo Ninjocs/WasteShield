@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Tag(name = "Room Controller", description = "APIs for managing rooms")
 @RestController
-@RequestMapping("/api/rooms")
+@RequestMapping("/api/places")
 public class RoomController {
 
     private List<RoomEntity> roomList = new ArrayList<>();
@@ -26,9 +26,9 @@ public class RoomController {
     }
 
     @Operation(summary = "Retrieve a room by ID", description = "Find a room using its ID")
-    @GetMapping("/{room_id}")
-    public ResponseEntity<RoomEntity> getRoomById(@PathVariable Long room_id) {
-        Optional<RoomEntity> room = roomList.stream().filter(r -> r.getId().equals(room_id)).findFirst();
+    @GetMapping("/{place_id}")
+    public ResponseEntity<RoomEntity> getRoomById(@PathVariable Long place_id) {
+        Optional<RoomEntity> room = roomList.stream().filter(r -> r.getId().equals(place_id)).findFirst();
         return room.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
@@ -41,9 +41,9 @@ public class RoomController {
     }
 
     @Operation(summary = "Delete a room by ID", description = "Delete a room and all associated windows and heaters")
-    @DeleteMapping("/{room_id}")
-    public ResponseEntity<Void> deleteRoom(@PathVariable Long room_id) {
-        Optional<RoomEntity> room = roomList.stream().filter(r -> r.getId().equals(room_id)).findFirst();
+    @DeleteMapping("/{place_id}")
+    public ResponseEntity<Void> deleteRoom(@PathVariable Long place_id) {
+        Optional<RoomEntity> room = roomList.stream().filter(r -> r.getId().equals(place_id)).findFirst();
         if (room.isPresent()) {
             roomList.remove(room.get());
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -53,9 +53,9 @@ public class RoomController {
     }
 
     @Operation(summary = "Open all windows in a room", description = "Switch all windows in the room to OPEN")
-    @PutMapping("/{room_id}/openWindows")
-    public ResponseEntity<Void> openWindows(@PathVariable Long room_id) {
-        Optional<RoomEntity> room = roomList.stream().filter(r -> r.getId().equals(room_id)).findFirst();
+    @PutMapping("/{place_id}/openWindows")
+    public ResponseEntity<Void> openWindows(@PathVariable Long place_id) {
+        Optional<RoomEntity> room = roomList.stream().filter(r -> r.getId().equals(place_id)).findFirst();
         if (room.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {
@@ -64,9 +64,9 @@ public class RoomController {
     }
 
     @Operation(summary = "Close all windows in a room", description = "Switch all windows in the room to CLOSED")
-    @PutMapping("/{room_id}/closeWindows")
-    public ResponseEntity<Void> closeWindows(@PathVariable Long room_id) {
-        Optional<RoomEntity> room = roomList.stream().filter(r -> r.getId().equals(room_id)).findFirst();
+    @PutMapping("/{place_id}/closeWindows")
+    public ResponseEntity<Void> closeWindows(@PathVariable Long place_id) {
+        Optional<RoomEntity> room = roomList.stream().filter(r -> r.getId().equals(place_id)).findFirst();
         if (room.isPresent()) {
             return ResponseEntity.status(HttpStatus.OK).build();
         } else {

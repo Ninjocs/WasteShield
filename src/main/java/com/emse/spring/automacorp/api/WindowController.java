@@ -11,27 +11,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "Window Controller", description = "APIs for managing windows")
+@Tag(name = "Meal Controller", description = "APIs for managing meals")
 @RestController
-@RequestMapping("/api/windows")
+@RequestMapping("/api/meal")
 public class WindowController {
 
     private List<WindowEntity> windowList = new ArrayList<>();
 
-    @Operation(summary = "Retrieve a list of windows", description = "Fetch all windows in the system")
+    @Operation(summary = "Retrieve a list of meals", description = "Fetch all meals in the system")
     @GetMapping
     public List<WindowEntity> getWindows() {
         return windowList;
     }
 
-    @Operation(summary = "Retrieve a window by ID", description = "Find a window using its ID")
+    @Operation(summary = "Retrieve a meal by ID", description = "Find a meal using its ID")
     @GetMapping("/{id}")
     public ResponseEntity<WindowEntity> getWindowById(@PathVariable Long id) {
         Optional<WindowEntity> window = windowList.stream().filter(w -> w.getId().equals(id)).findFirst();
         return window.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
-    @Operation(summary = "Create a new window", description = "Create a new window and add it to the system")
+    @Operation(summary = "Create a new meal", description = "Create a new meal and add it to the system")
     @PostMapping
     public ResponseEntity<WindowEntity> createWindow(@RequestBody WindowEntity windowEntity) {
         windowEntity.setId((long) (windowList.size() + 1)); // Simple ID assignment for demo
@@ -39,7 +39,7 @@ public class WindowController {
         return ResponseEntity.status(HttpStatus.CREATED).body(windowEntity);
     }
 
-    @Operation(summary = "Update an existing window", description = "Update the details of an existing window")
+    @Operation(summary = "Update an existing meal", description = "Update the details of an existing meal")
     @PutMapping("/{id}")
     public ResponseEntity<WindowEntity> updateWindow(@PathVariable Long id, @RequestBody WindowEntity updatedWindow) {
         Optional<WindowEntity> existingWindow = windowList.stream().filter(w -> w.getId().equals(id)).findFirst();
@@ -51,7 +51,7 @@ public class WindowController {
         }
     }
 
-    @Operation(summary = "Delete a window by ID", description = "Delete a window using its ID")
+    @Operation(summary = "Delete a meal by ID", description = "Delete a meal using its ID")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWindow(@PathVariable Long id) {
         Optional<WindowEntity> window = windowList.stream().filter(w -> w.getId().equals(id)).findFirst();
