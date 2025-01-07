@@ -4,7 +4,7 @@ import jakarta.persistence.*; // or use javax.persistence.* depending on your JP
 import javax.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "SP_WINDOW")
+@Table(name = "SP_MEAL")
 public class WindowEntity {
 
     @Id
@@ -15,7 +15,7 @@ public class WindowEntity {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "room_id")
+    @JoinColumn(name = "place_id")
     private RoomEntity room;
 
     public WindowEntity() {
