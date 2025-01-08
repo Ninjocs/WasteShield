@@ -35,9 +35,42 @@ public class RoomController {
     @Operation(summary = "Create or update a room", description = "Create or update a room and add it to the system")
     @PostMapping
     public ResponseEntity<RoomEntity> createOrUpdateRoom(@RequestBody RoomEntity roomEntity) {
-        roomEntity.setId((long) (roomList.size() + 1));
-        roomList.add(roomEntity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(roomEntity);
+        // Check if a room with the given ID already exists
+        Optional<RoomEntity> existingRoom = roomList.stream()
+                .filter(room -> room.getId().equals(roomEntity.getId()))
+                .findFirst();
+
+        if (existingRoom.isPresent()) {
+            // If the room exists, update the room's properties
+            RoomEntity roomToUpdate = existingRoom.get();
+            roomToUpdate.setName(roomEntity.getName());  // Update the room's fields
+            roomToUpdate.setCurrentTemperature(roomEntity.getCurrentTemperature());
+            roomToUpdate.setCurrentHumidity(roomEntity.getCurrentHumidity());
+
+            // Update or add windows
+            for (WindowEntity newWindow : roomEntity.getWindows()) {
+                Optional<WindowEntity> existingWindow = roomToUpdate.getWindows().stream()
+                        .filter(window -> window.getId().equals(newWindow.getId()))
+                        .findFirst();
+
+                if (existingWindow.isPresent()) {
+                    // Update the existing window
+                    WindowEntity windowToUpdate = existingWindow.get();
+                    windowToUpdate.setName(newWindow.getName());
+                    windowToUpdate.setRoom(newWindow.getRoom());
+                } else {
+                    // Add the new window if it doesn't exist
+                    roomToUpdate.getWindows().add(newWindow);
+                }
+            }
+
+            return ResponseEntity.status(HttpStatus.OK).body(roomToUpdate);
+        } else {
+            // If the room doesn't exist, create a new one and add it to the list
+            roomEntity.setId((long) (roomList.size() + 1));  // Generate new ID if necessary
+            roomList.add(roomEntity);
+            return ResponseEntity.status(HttpStatus.CREATED).body(roomEntity);
+        }
     }
 
     @Operation(summary = "Delete a room by ID", description = "Delete a room and all associated windows and heaters")
