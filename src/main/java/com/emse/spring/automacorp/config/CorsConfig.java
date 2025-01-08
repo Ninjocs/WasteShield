@@ -10,12 +10,12 @@ public class CorsConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        // Allow CORS for all paths and all origins
+        // Allow CORS for all paths and all origins (e.g., allow frontend at localhost:8000 or cleverapps.io)
         registry.addMapping("/**")
-                .allowedOrigins("http://wasteshield.cleverapps.io/api/rooms")
+                .allowedOrigins("http://localhost:8000", "https://wasteshield.cleverapps.io") // Allowed frontend origins
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("*")
-                .allowCredentials(true);
+                .allowedHeaders("*") // Allow all headers
+                .allowCredentials(true); // Allow credentials (cookies, authentication headers, etc.)
     }
 }
 
