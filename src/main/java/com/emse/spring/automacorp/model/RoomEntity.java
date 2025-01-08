@@ -68,7 +68,7 @@ public class RoomEntity {
         return currentTemperature;
     }
 
-    public void setCurrentTemperature(Long currentTemperatureId) {
+    public void setCurrentTemperature(Long currentTemperature) {
         this.currentTemperature = currentTemperature;
     }
 

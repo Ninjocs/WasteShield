@@ -24,7 +24,7 @@ public class RoomMapper {
                 roomEntity.getId(),
                 roomEntity.getName(),
                 roomEntity.getCurrentHumidity(),
-                roomEntity.getCurrentTemperature() != null ? roomEntity.getCurrentTemperature() : null,
+                roomEntity.getCurrentTemperature(),
                 windowIds
         );
     }
