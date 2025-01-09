@@ -1,6 +1,7 @@
 package com.emse.spring.automacorp.model;
 
-import jakarta.persistence.*; // or use javax.persistence.* depending on your JPA setup
+import com.fasterxml.jackson.annotation.JsonBackReference;  // Jackson annotation for managing back reference
+import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
@@ -16,12 +17,12 @@ public class WindowEntity {
 
     @ManyToOne
     @JoinColumn(name = "place_id")
+    @JsonBackReference  // This annotation prevents infinite recursion by excluding the 'room' field from serialization
     private RoomEntity room;
 
-    public WindowEntity() {
-    }
+    public WindowEntity() {}
 
-    public WindowEntity(String name, RoomEntity room) { // Updated constructor
+    public WindowEntity(String name, RoomEntity room) {
         this.name = name;
         this.room = room;
     }

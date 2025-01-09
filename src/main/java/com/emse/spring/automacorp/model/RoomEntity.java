@@ -1,8 +1,8 @@
 package com.emse.spring.automacorp.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;  // Jackson annotation for managing references
 import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -13,7 +13,7 @@ public class RoomEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull // Non-nullable name
+    @NotNull
     private String name;
 
     @Column(name = "current_temperature")
@@ -23,25 +23,16 @@ public class RoomEntity {
     private Double currentHumidity;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
+    @JsonManagedReference  // This annotation manages the serialization of the 'windows' field
     private List<WindowEntity> windows;
 
     public RoomEntity() {}
 
-    public RoomEntity(String name, Double targetTemperature,Double currentHumidity, List<WindowEntity> windows) {
+    public RoomEntity(String name, Long currentTemperature, Double currentHumidity, List<WindowEntity> windows) {
         this.name = name;
         this.currentTemperature = currentTemperature;
         this.currentHumidity = currentHumidity;
         this.windows = windows;
-
-        for (WindowEntity window : windows) {
-            window.setRoom(this);
-        }
-    }
-
-    public RoomEntity(String name, Long currentTemperature, double humidity) {
-        this.name = name;
-        this.currentTemperature = currentTemperature;
-        this.currentHumidity = humidity;
 
         for (WindowEntity window : windows) {
             window.setRoom(this);
@@ -76,8 +67,8 @@ public class RoomEntity {
         return currentHumidity;
     }
 
-    public void setCurrentHumidity(Double targetTemperature) {
-        this.currentHumidity = targetTemperature;
+    public void setCurrentHumidity(Double currentHumidity) {
+        this.currentHumidity = currentHumidity;
     }
 
     public List<WindowEntity> getWindows() {
@@ -86,10 +77,8 @@ public class RoomEntity {
 
     public void setWindows(List<WindowEntity> windows) {
         this.windows = windows;
-
         for (WindowEntity window : windows) {
             window.setRoom(this);
         }
     }
 }
-
