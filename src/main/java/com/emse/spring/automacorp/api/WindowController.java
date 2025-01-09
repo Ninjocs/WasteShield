@@ -1,65 +1,83 @@
 package com.emse.spring.automacorp.api;
 
+import com.emse.spring.automacorp.model.RoomEntity;
 import com.emse.spring.automacorp.model.WindowEntity;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import com.emse.spring.automacorp.repository.RoomRepository;
+import com.emse.spring.automacorp.repository.WindowRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "Meal Controller", description = "APIs for managing meals")
 @RestController
 @RequestMapping("/api/meal")
 public class WindowController {
 
-    private List<WindowEntity> windowList = new ArrayList<>();
+    @Autowired
+    private RoomRepository roomRepository;
 
-    @Operation(summary = "Retrieve a list of meals", description = "Fetch all meals in the system")
-    @GetMapping
-    public List<WindowEntity> getWindows() {
-        return windowList;
-    }
+    @Autowired
+    private WindowRepository windowRepository;
 
-    @Operation(summary = "Retrieve a meal by ID", description = "Find a meal using its ID")
-    @GetMapping("/{id}")
-    public ResponseEntity<WindowEntity> getWindowById(@PathVariable Long id) {
-        Optional<WindowEntity> window = windowList.stream().filter(w -> w.getId().equals(id)).findFirst();
-        return window.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-    }
-
-    @Operation(summary = "Create a new meal", description = "Create a new meal and add it to the system")
+    // Add a meal (window) to an existing room
     @PostMapping
-    public ResponseEntity<WindowEntity> createWindow(@RequestBody WindowEntity windowEntity) {
-        windowEntity.setId((long) (windowList.size() + 1)); // Simple ID assignment for demo
-        windowList.add(windowEntity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(windowEntity);
-    }
+    public ResponseEntity<WindowEntity> addMealToRoom(@RequestBody WindowEntity meal) {
+        if (meal.getRoom() == null || meal.getRoom().getName() == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // Room name is missing
+        }
 
-    @Operation(summary = "Update an existing meal", description = "Update the details of an existing meal")
-    @PutMapping("/{id}")
-    public ResponseEntity<WindowEntity> updateWindow(@PathVariable Long id, @RequestBody WindowEntity updatedWindow) {
-        Optional<WindowEntity> existingWindow = windowList.stream().filter(w -> w.getId().equals(id)).findFirst();
-        if (existingWindow.isPresent()) {
-            WindowEntity window = existingWindow.get();
-            return ResponseEntity.ok(window);
+        // Check if the room exists
+        Optional<RoomEntity> roomOpt = roomRepository.findByName(meal.getRoom().getName());
+        if (roomOpt.isPresent()) {
+            RoomEntity room = roomOpt.get();
+
+            // Link meal to the room
+            meal.setRoom(room);
+
+            // Save the meal
+            WindowEntity savedMeal = windowRepository.save(meal);
+
+            // Save the updated room with the new meal
+            room.getWindows().add(savedMeal);
+            roomRepository.save(room);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedMeal);
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null); // Room not found
         }
     }
 
-    @Operation(summary = "Delete a meal by ID", description = "Delete a meal using its ID")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteWindow(@PathVariable Long id) {
-        Optional<WindowEntity> window = windowList.stream().filter(w -> w.getId().equals(id)).findFirst();
-        if (window.isPresent()) {
-            windowList.remove(window.get());
+    // Get meals by room
+    @GetMapping("/{roomId}/meals")
+    public ResponseEntity<?> getMealsByRoom(@PathVariable Long roomId) {
+        Optional<RoomEntity> roomOpt = roomRepository.findById(roomId);
+        if (roomOpt.isPresent()) {
+            return ResponseEntity.ok(roomOpt.get().getWindows());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Room not found");
+        }
+    }
+
+    // Delete a meal
+    @DeleteMapping("/{mealId}")
+    public ResponseEntity<?> deleteMeal(@PathVariable Long mealId) {
+        Optional<WindowEntity> mealOpt = windowRepository.findById(mealId);
+        if (mealOpt.isPresent()) {
+            WindowEntity meal = mealOpt.get();
+
+            // Remove the meal from its room
+            RoomEntity room = meal.getRoom();
+            room.getWindows().remove(meal);
+            roomRepository.save(room);
+
+            // Delete the meal
+            windowRepository.delete(meal);
+
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Meal not found");
         }
     }
 }
