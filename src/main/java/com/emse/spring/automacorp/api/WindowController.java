@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @Tag(name = "Meal Controller", description = "APIs for managing meals (windows)")
@@ -70,5 +71,21 @@ public class WindowController {
         // Remove the meal from the room's list of windows
         room.getWindows().remove(windowOpt.get());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); // Successfully deleted
+    }
+
+    @Operation(summary = "Fetch all meals (windows) in a room", description = "Fetches all meals (windows) associated with a room")
+    @GetMapping("/windows")
+    public ResponseEntity<List<WindowEntity>> getAllMealsInRoom(@PathVariable Long place_id) {
+        // Retrieve the room based on place_id
+        Optional<RoomEntity> roomOpt = roomController.getRoomById(place_id);
+        if (!roomOpt.isPresent()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build(); // Room not found
+        }
+
+        RoomEntity room = roomOpt.get();
+
+        // Return the list of meals (windows) for the room
+        List<WindowEntity> windows = room.getWindows();
+        return ResponseEntity.ok(windows); // Successfully return the list of windows
     }
 }
