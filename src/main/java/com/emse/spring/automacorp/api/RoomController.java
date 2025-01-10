@@ -55,6 +55,4 @@ public class RoomController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
-    // Other RoomController methods...
 }

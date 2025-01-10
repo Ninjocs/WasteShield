@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Optional;
 
 public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
-    Optional<RoomEntity> findByName(String name);  // Method to find a room by its name
+    Optional<RoomEntity> findByName(String name);
 }
 

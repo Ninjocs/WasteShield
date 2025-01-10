@@ -9,7 +9,6 @@ import java.sql.SQLException;
 public class AutomacorpApplication {
 
 	public static void main(String[] args) throws SQLException {
-		// Start the H2 server in TCP mode
 		Server.createTcpServer("-tcp", "-tcpAllowOthers", "-tcpPort", "9092").start();
 
 		// Start the Spring Boot application

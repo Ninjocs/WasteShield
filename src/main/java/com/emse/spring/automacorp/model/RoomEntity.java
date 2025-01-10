@@ -1,6 +1,6 @@
 package com.emse.spring.automacorp.model;
 
-import com.fasterxml.jackson.annotation.JsonManagedReference;  // Jackson annotation for managing references
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -23,7 +23,7 @@ public class RoomEntity {
     private Double currentHumidity;
 
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL)
-    @JsonManagedReference  // This annotation manages the serialization of the 'windows' field
+    @JsonManagedReference
     private List<WindowEntity> windows;
 
     public RoomEntity() {}

@@ -1,6 +1,6 @@
 package com.emse.spring.automacorp.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;  // Jackson annotation for managing back reference
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import javax.validation.constraints.NotNull;
 
@@ -17,7 +17,7 @@ public class WindowEntity {
 
     @ManyToOne
     @JoinColumn(name = "place_id")
-    @JsonBackReference  // This annotation prevents infinite recursion by excluding the 'room' field from serialization
+    @JsonBackReference
     private RoomEntity room;
 
     public WindowEntity() {}

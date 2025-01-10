@@ -17,7 +17,7 @@ public class WindowDaoCustomImpl implements WindowDaoCustom {
     public List<WindowEntity> findRoomsWithOpenWindows(Long roomId) {
         String jpql = "SELECT w FROM WindowEntity w " +
                 "INNER JOIN w.windowStatus s " +
-                "WHERE w.room.id = :roomId AND s.value = 1.0 " +  // Assuming 1.0 means 'open'
+                "WHERE w.room.id = :roomId AND s.value = 1.0 " +
                 "ORDER BY w.name";
         return em.createQuery(jpql, WindowEntity.class)
                 .setParameter("roomId", roomId)
